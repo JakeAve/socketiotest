@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm run build --prefix client",
+    "build": "npm run build --prefix ./client",
     "dev:client": "npm start --prefix ./client",
-    "dev:server": "nodemon --ignore ./client server.js --ignore ./db/rooms",
+    "dev:server": "nodemon server.js --ignore ./client --ignore ./db/rooms",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "postinstall": "cd client && npm i && npm run build",
     "start": "cross-env NODE_ENV=production node server"
