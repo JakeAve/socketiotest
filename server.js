@@ -1,7 +1,19 @@
+const path = require('path');
 const express = require('express');
 const app = express();
 
-const PORT = 5000;
+const dbInterface = require('./db/ghettodb');
+const db = new dbInterface('./db/rooms');
+
+if (process.env.NODE_ENV === 'production') {
+  // set static folder
+  app.use(express.static('client/build'));
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+  });
+}
+
+const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, () => console.log(`Running on ${PORT}`));
 
@@ -11,9 +23,25 @@ const io = require('socket.io')(server, {
   },
 });
 
-const dbInterface = require('./db/ghettodb');
+const updateChatrooms = (socket) => {
+  db.getChatrooms()
+    .then((chatrooms) => {
+      socket.emit('chatrooms', chatrooms);
+    })
+    .catch((err) => console.error(err));
+};
 
-const db = new dbInterface('./db/rooms');
+const leaveChatroom = (user, chatroom) => {
+  if (user && chatroom) {
+    const userLeft = {
+      sender: 'system',
+      text: `{${user}} left the chat`,
+      time: new Date().toISOString(),
+    };
+    io.in(chatroom).emit('receive-message', userLeft);
+    db.storeMessage(userLeft, chatroom);
+  }
+};
 
 io.on('connection', (socket) => {
   console.log(`Nice to meet you (shake hand awkwardly), ${socket.id}`);
@@ -54,23 +82,3 @@ io.on('connection', (socket) => {
       .catch((err) => console.error(err));
   });
 });
-
-const updateChatrooms = (socket) => {
-  db.getChatrooms()
-    .then((chatrooms) => {
-      socket.emit('chatrooms', chatrooms);
-    })
-    .catch((err) => console.error(err));
-};
-
-const leaveChatroom = (user, chatroom) => {
-  if (user && chatroom) {
-    const userLeft = {
-      sender: 'system',
-      text: `{${user}} left the chat`,
-      time: new Date().toISOString(),
-    };
-    io.in(chatroom).emit('receive-message', userLeft);
-    db.storeMessage(userLeft, chatroom);
-  }
-};
