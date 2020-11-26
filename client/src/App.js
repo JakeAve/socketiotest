@@ -1,26 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
-import Chat from './components/Chat';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import './App.scss';
+import Header from './components/Header';
+import Login from './components/Login';
+import { UserProvider } from './context/userContext';
+import { SocketProvider } from './context/socketContext';
+import MainView from './components/MainView';
+import Logout from './components/Logout';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-      <Chat />
-    </div>
+    <UserProvider>
+      <SocketProvider>
+        <Router>
+          <Header />
+          <Switch>
+            <Route path="/chat/:chatroom" component={MainView} />
+            <Route path="/logout" component={Logout} exact />
+            <Route path={['/', '/login']} component={Login} />
+          </Switch>
+        </Router>
+      </SocketProvider>
+    </UserProvider>
   );
 }
 
