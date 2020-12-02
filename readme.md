@@ -1,6 +1,6 @@
 # Ghetto Express React Node Chat
 
-Chat with people on yourself using a ghetto database.
+Chat with people or yourself using a ghetto database.
 
 ## Install
 
