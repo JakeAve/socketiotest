@@ -8,7 +8,7 @@ export default function Message(props) {
 
   let className = sender === user ? 'own' : '';
   if (sender === 'system') {
-    className += ' system';
+    className += 'system';
     text = text.replace(/{(.*)}/g, (match, p1) => (p1 === user ? 'You' : p1));
     sender = '';
   }
