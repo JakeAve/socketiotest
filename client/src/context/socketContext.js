@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import io from 'socket.io-client';
 
-const SocketContext = createContext(io(':5000'));
+const SocketContext = createContext(io(process.env.REACT_APP_SOCKETIO_PORT));
 
 export function useSocket() {
   return useContext(SocketContext);

@@ -1,15 +1,3 @@
-const msgSchema = {
-  sender: 'user',
-  msg: 'Text of the message',
-  time: new Date(),
-};
-
-const chatRoomSchema = {
-  name: 'chatroom-1',
-  users: ['jake', 'hannah'],
-  messages: [],
-};
-
 const path = require('path');
 const fs = require('fs');
 const { promisify } = require('util');
@@ -64,7 +52,9 @@ class ghettoDB {
 
   async getChatrooms() {
     const dirs = await readdir(this.dbRoot);
-    return dirs.map((file) => file.replace(/\.json$/, ''));
+    return dirs
+      .filter((f) => f !== '.gitignore')
+      .map((file) => file.replace(/\.json$/, ''));
   }
 
   addUser(chatroom) {}
